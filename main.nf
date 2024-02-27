@@ -7,27 +7,24 @@ process BACMET{
     publishDir "$baseDir/out", mode: 'copy'
 
     input:
-    path sequence_file
+    path fasta
 
     output:
-    path "${sequence_file}.tsv"
+    path "${fasta.getName().replace(".gz", "")}.tsv"
 
+    script:
+    def prefix = fasta.getSimpleName()
+    def is_compressed = fasta.getName().endsWith(".gz") ? true : false
+    def fasta_name = fasta.getName().replace(".gz", "")
     """
-    BacMet-Scan -i $sequence_file -d /home/bacmet/$params.db/ -o $sequence_file
-    mv '$sequence_file'.table '$sequence_file'.tsv
-    """
-}
+    if [ "$is_compressed" == "true" ]; then
+        gzip -c -d $fasta > $fasta_name
+    fi
 
-process UNZIP{
-    input:
-    file '*'
+    cp /home/bacmet/* .
 
-    output:
-    path "unzipped_seqs/*"
-
-    """
-    mkdir unzipped_seqs
-    for f in *.gz ; do gunzip -c "\$f" > unzipped_seqs/"\${f%.*}" ; done
+    BacMet-Scan -i $fasta_name -d $params.db -o ${fasta_name}
+    mv ${fasta_name}.table ${fasta_name}.tsv
     """
 }
 
@@ -86,10 +83,8 @@ process CSV{
 
 workflow {
     input_seqs = Channel
-        .fromPath("$baseDir/test_input/*")
+        .fromPath(params.reads)
 
-    UNZIP(input_seqs)
-
-    BACMET(UNZIP.out)
+    BACMET(input_seqs)
     CSV(BACMET.out.collect())
 }
