@@ -1,5 +1,5 @@
 #!/usr/bin/env nextflow
-params.input = "$baseDir/test_input/"
+params.input = "$baseDir/test_input"
 params.output = "$baseDir/out"
 params.db = "EXP"
 params.zip = false
@@ -110,7 +110,7 @@ process ZIP{
 
 workflow {
     input_seqs = Channel
-        .fromPath("$params.input*{fas,gz,fasta,fsa,fsa.gz,fas.gz}")
+        .fromPath("$params.input/*{fas,gz,fasta,fsa,fsa.gz,fas.gz}")
 
     BACMET(input_seqs)
     results = BACMET.out.collect()

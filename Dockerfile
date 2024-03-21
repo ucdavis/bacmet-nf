@@ -1,7 +1,7 @@
 FROM debian:bullseye-slim
 
 RUN apt-get update -qq; \
-    apt-get install --no-install-recommends -y -qq ncbi-blast+;
+    apt-get install --no-install-recommends -y -qq ncbi-blast+ procps;
 
 
 ADD http://bacmet.biomedicine.gu.se/download/BacMet-Scan /usr/local/bin/
