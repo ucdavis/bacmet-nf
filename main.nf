@@ -35,7 +35,6 @@ process BACMET{
 }
 
 process CSV{
-    debug true
     publishDir params.output, mode: 'copy'
 
     input:
@@ -93,7 +92,6 @@ process CSV{
 }
 
 process ZIP{
-    debug true
     publishDir "$baseDir/out", mode: 'copy'
 
     input:
