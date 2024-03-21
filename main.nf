@@ -1,10 +1,11 @@
 #!/usr/bin/env nextflow
-params.reads = "$baseDir/test_input/*"
-params.gene_result_column = 1
-params.db = "PRE"
+params.input = "$baseDir/test_input/"
+params.output = "$baseDir/out"
+params.db = "EXP"
+params.zip = false
 
 process BACMET{
-    publishDir "$baseDir/out", mode: 'copy'
+    publishDir params.output, mode: 'copy'
 
     input:
     path fasta
@@ -21,15 +22,20 @@ process BACMET{
         gzip -c -d $fasta > $fasta_name
     fi
 
-    cp /home/bacmet/* .
+    ln -s /home/bacmet/*.fasta .
+    ln -s /home/bacmet/*.txt .
 
     BacMet-Scan -i $fasta_name -d $params.db -o ${fasta_name}
     mv ${fasta_name}.table ${fasta_name}.tsv
+
+    #bacmet leaves a trailing tab :(
+    sed -i "1s/\t\$//" ${fasta_name}.tsv
     """
 }
 
 process CSV{
-    publishDir "$baseDir/out", mode: 'copy'
+    debug true
+    publishDir params.output, mode: 'copy'
 
     input:
     val tables
@@ -42,16 +48,16 @@ process CSV{
     results = [:]
     tables.each { table ->
         sample_genes = []
-        sample = file(table)
-        allLines = sample.readLines()
-        allLines.remove(0)//strip table header
-        for( line : allLines ) {
-            result = line.split()[params.gene_result_column]
-            sample_genes.push(result)
-        }
+
+
+        table
+            .splitCsv(header:true,sep:"\t")
+            .each {row -> sample_genes.push(row["Subject"])}
+
         sample_genes.unique()
         gene_list += sample_genes
-        sample_name = sample.name.split("\\.").first()
+
+        sample_name = table.name.split("\\.").first()
         results[sample_name] = sample_genes
     }
     result_table = ""
@@ -71,8 +77,12 @@ process CSV{
     }
 
     //clean gene names to only show first two identifiers
-    gene_list = gene_list.collect{ "${it.split('\\|')[0]}|${it.split('\\|')[1]}" }
-
+    gene_list = gene_list.collect{ gene ->
+        matcher = gene =~ /^([^|]+\|[^|]+)\|/
+        if (matcher.find()){
+            return matcher.group(1)
+        }
+    }
     gene_list.push('Isolate')
     headers = gene_list.join(',') + "\n"
     result_table = headers + result_table
@@ -81,10 +91,32 @@ process CSV{
     csv_file.text = result_table
 }
 
+process ZIP{
+    debug true
+    publishDir "$baseDir/out", mode: 'copy'
+
+    input:
+    path files
+    path csv
+
+    output:
+    path '*.tar.gz'
+
+    """
+    current_date=\$(date +"%d-%m-%Y")
+    outfile="bacmet_${params.db}_\${current_date}.tar.gz"
+    tar -chzf \${outfile} ${files.join(' ')} $csv
+    """
+}
+
 workflow {
     input_seqs = Channel
-        .fromPath(params.reads)
+        .fromPath("$params.input*{fas,gz,fasta,fsa,fsa.gz,fas.gz}")
 
     BACMET(input_seqs)
-    CSV(BACMET.out.collect())
+    results = BACMET.out.collect()
+    CSV(results)
+    if (params.zip){
+        ZIP(results,CSV.out)
+    }
 }
