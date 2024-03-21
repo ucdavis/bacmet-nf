@@ -24,7 +24,7 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         env:
-          ECR_REGISTRY: public.ecr.aws
+          ECR_REGISTRY: public.ecr.aws/x0z5w6m2
           ECR_REPOSITORY: bacmet
           IMAGE_TAG: latest
         run: |
