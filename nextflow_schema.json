@@ -34,10 +34,13 @@
           "description": "Optional BacMet",
           "default": "",
           "properties": {
-              "k": {
-                  "type": "string",
+              "db": {
+                  "type": "array",
                   "description": "BacMet Database EXP (experimental) or PRE (predicted). Defaults to EXP",
-                  "fa_icon": "fas fa-flask"
+                  "fa_icon": "fas fa-flask",
+                  "items": {
+                    "enum": ["EXP", "PRE"]
+                }
               },
               "gzip": {
                   "type": "boolean",
