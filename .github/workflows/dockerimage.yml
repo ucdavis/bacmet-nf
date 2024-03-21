@@ -24,8 +24,8 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: x0z5w6m2/bacmet
+          ECR_REGISTRY: public.ecr.aws/x0z5w6m2/
+          ECR_REPOSITORY: bacmet
           IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
