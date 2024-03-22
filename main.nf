@@ -2,7 +2,7 @@
 params.input = "$baseDir/test_input"
 params.output = "$baseDir/out"
 params.db = "EXP"
-params.zip = false
+params.gzip = false
 
 process BACMET{
     publishDir params.output, mode: 'copy'
@@ -115,7 +115,7 @@ workflow {
     BACMET(input_seqs)
     results = BACMET.out.collect()
     CSV(results)
-    if (params.zip){
+    if (params.gzip){
         ZIP(results,CSV.out)
     }
 }
