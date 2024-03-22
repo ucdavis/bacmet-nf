@@ -102,7 +102,7 @@ process ZIP{
     path '*.tar.gz'
 
     """
-    current_date=\$(date +"%d-%m-%Y")
+    current_date=\$(date +"%Y-%m-%d")
     outfile="bacmet_${params.db}_\${current_date}.tar.gz"
     tar -chzf \${outfile} ${files.join(' ')} $csv
     """
