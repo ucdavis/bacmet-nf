@@ -92,7 +92,7 @@ process CSV{
 }
 
 process ZIP{
-    publishDir "$baseDir/out", mode: 'copy'
+    publishDir params.output, mode: 'copy'
 
     input:
     path files
