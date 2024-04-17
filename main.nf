@@ -3,6 +3,14 @@ params.input = "$baseDir/test_input"
 params.output = "$baseDir/out"
 params.db = "EXP"
 params.gzip = false
+params.percent = 90
+params.evalue = 1
+params.length = 30
+
+args = []
+if (params.percent) args.push("-p ${params.percent}")
+if (params.evalue) args.push("-e ${params.evalue}")
+if (params.length) args.push("-l ${params.length}")
 
 process BACMET{
     publishDir params.output, mode: 'copy'
@@ -26,7 +34,7 @@ process BACMET{
     ln -s /home/bacmet/*.fasta .
     ln -s /home/bacmet/*.txt .
 
-    BacMet-Scan -i $fasta_name -d $params.db -o ${fasta_name}
+    BacMet-Scan ${args.join(' ')} -i $fasta_name -d $params.db -o ${fasta_name}
     mv ${fasta_name}.table ${fasta_name}.tsv
 
     #bacmet leaves a trailing tab :(

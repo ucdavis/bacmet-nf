@@ -39,11 +39,29 @@
                   "description": "BacMet Database EXP (experimental) or PRE (predicted). Defaults to EXP",
                   "fa_icon": "fas fa-flask"
               },
-              "gzip": {
-                  "type": "boolean",
-                  "description": "If set to true results will be gzipped for easy downloading. ",
-                  "fa_icon": "fas fa-file-archive"
-              }
+              "identity": {
+                "type": "integer",
+                "description": "If set to true results will be gzipped for easy downloading. ",
+                "fa_icon": "fas fa-percent",
+                "default": 90
+            },
+            "length": {
+                "type": "integer",
+                "description": "If set to true results will be gzipped for easy downloading. ",
+                "fa_icon": "fas fa-arrows-h",
+                "default": 30
+            },
+            "evalue": {
+                "type": "integer",
+                "description": "If set to true results will be gzipped for easy downloading. ",
+                "fa_icon": "fas fa-etsy",
+                "default": 1
+            },
+            "gzip": {
+                "type": "boolean",
+                "description": "If set to true results will be gzipped for easy downloading. ",
+                "fa_icon": "fas fa-file-archive"
+            }
           }
       }
   },
