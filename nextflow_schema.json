@@ -41,19 +41,19 @@
               },
               "identity": {
                 "type": "integer",
-                "description": "If set to true results will be gzipped for easy downloading. ",
+                "description": "Percent identity cutoff, default = 90.",
                 "fa_icon": "fas fa-percent",
                 "default": 90
             },
             "length": {
                 "type": "integer",
-                "description": "If set to true results will be gzipped for easy downloading. ",
+                "description": "Length cutoff, default = 30.",
                 "fa_icon": "fas fa-arrows-h",
                 "default": 30
             },
             "evalue": {
                 "type": "integer",
-                "description": "If set to true results will be gzipped for easy downloading. ",
+                "description": "E-value cutoff, default = 1.",
                 "fa_icon": "fas fa-etsy",
                 "default": 1
             },
